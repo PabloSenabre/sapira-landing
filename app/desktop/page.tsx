@@ -1,0 +1,7 @@
+"use client";
+
+import MacOSDesktop from "@/components/macos/MacOSDesktop";
+
+export default function DesktopPage() {
+  return <MacOSDesktop />;
+}
