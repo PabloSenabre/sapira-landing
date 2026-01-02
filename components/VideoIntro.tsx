@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface VideoIntroProps {
@@ -12,6 +12,8 @@ export default function VideoIntro({ onComplete }: VideoIntroProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const [portalPhase, setPortalPhase] = useState<"idle" | "opening" | "pulling" | "through" | "done">("idle");
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -19,23 +21,43 @@ export default function VideoIntro({ onComplete }: VideoIntroProps) {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    
+  // Handle video load success
+  const handleVideoCanPlay = useCallback(() => {
+    setVideoLoaded(true);
     if (videoRef.current) {
       videoRef.current.play().catch(() => {
-        console.log("Autoplay blocked");
+        console.log("Autoplay blocked - user interaction required");
       });
     }
+  }, []);
+
+  // Handle video errors - show fallback
+  const handleVideoError = useCallback(() => {
+    console.log("Video failed to load - showing fallback");
+    setVideoError(true);
+    setVideoLoaded(true); // Still show content
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
 
     const showTimer = setTimeout(() => {
       setShowLogo(true);
     }, 500);
 
+    // Fallback timeout - if video doesn't load in 5s, show content anyway
+    const fallbackTimer = setTimeout(() => {
+      if (!videoLoaded) {
+        console.log("Video load timeout - showing fallback");
+        setVideoLoaded(true);
+      }
+    }, 5000);
+
     return () => {
       clearTimeout(showTimer);
+      clearTimeout(fallbackTimer);
     };
-  }, [mounted]);
+  }, [mounted, videoLoaded]);
 
   const handleExit = () => {
     if (isExiting) return;
@@ -95,14 +117,35 @@ export default function VideoIntro({ onComplete }: VideoIntroProps) {
                 ease: [0.16, 1, 0.3, 1]
               }}
             >
-              <video
-                ref={videoRef}
-                className="absolute inset-0 w-full h-full object-cover"
-                src="/videos/intro.mp4"
-                muted
-                playsInline
-                onEnded={handleExit}
-              />
+              {/* Video with cross-browser compatibility */}
+              {!videoError ? (
+                <video
+                  ref={videoRef}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  muted
+                  playsInline
+                  preload="auto"
+                  loop={false}
+                  onCanPlay={handleVideoCanPlay}
+                  onError={handleVideoError}
+                  onEnded={handleExit}
+                >
+                  {/* MP4 with H.264 - best browser support */}
+                  <source src="/videos/intro.mp4" type="video/mp4" />
+                  {/* Fallback message */}
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                /* Animated gradient fallback when video fails */
+                <div 
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    background: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #0a0a0a 100%)",
+                    backgroundSize: "400% 400%",
+                    animation: "gradientShift 8s ease infinite"
+                  }}
+                />
+              )}
             </motion.div>
 
             {/* Dark vignette overlay */}

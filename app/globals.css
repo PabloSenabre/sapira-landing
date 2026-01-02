@@ -498,3 +498,20 @@ button:not(.liquid-glass-button) {
   padding-block: 0.6em;
   letter-spacing: 0.02em;
 }
+
+/* ============================================
+   VIDEO FALLBACK ANIMATION
+   Animated gradient when video fails to load
+   ============================================ */
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
