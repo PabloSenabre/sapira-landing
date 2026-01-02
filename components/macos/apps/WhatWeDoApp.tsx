@@ -67,7 +67,12 @@ const DISCOVERED_WORKFLOWS = [
   },
 ];
 
-export default function WhatWeDoApp() {
+interface WhatWeDoAppProps {
+  autoPlay?: boolean;
+  onComplete?: () => void;
+}
+
+export default function WhatWeDoApp({ autoPlay, onComplete }: WhatWeDoAppProps) {
   const [nav, setNav] = useState<NavigationState>({
     section: "overview",
     discoverPage: "intro",
