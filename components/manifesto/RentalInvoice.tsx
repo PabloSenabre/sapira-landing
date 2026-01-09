@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useScrollDismiss } from "@/lib/useScrollDismiss";
 
 interface RentalInvoiceProps {
   isOpen: boolean;
@@ -221,6 +222,15 @@ export default function RentalInvoice({ isOpen, onClose, inline = false }: Renta
   const [showMessage, setShowMessage] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Scroll-based fade out - dismisses easter egg when it leaves viewport
+  const { opacity: scrollOpacity } = useScrollDismiss({
+    isOpen,
+    onClose,
+    elementRef: containerRef,
+    fadeThreshold: 0.5, // Start fading when 50% is visible
+    autoClose: true,
+  });
+
   const total = SAAS_ITEMS.reduce((sum, item) => sum + item.price, 0);
 
   const timestamp = new Date().toLocaleString('en-US', {
@@ -256,7 +266,6 @@ export default function RentalInvoice({ isOpen, onClose, inline = false }: Renta
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          ref={containerRef}
           className="pointer-events-auto"
           style={{
             perspective: '1500px',
@@ -618,10 +627,12 @@ export default function RentalInvoice({ isOpen, onClose, inline = false }: Renta
   if (inline) {
     return (
       <div 
-        className="absolute top-0 z-50"
+        ref={containerRef}
+        className="absolute top-0 z-50 transition-opacity duration-150"
         style={{
           left: '-320px', // Position to the LEFT of the parent
           marginTop: '-40px',
+          opacity: scrollOpacity,
         }}
       >
         {ticketContent}
@@ -632,11 +643,14 @@ export default function RentalInvoice({ isOpen, onClose, inline = false }: Renta
   // Default: fixed position (legacy behavior)
   return (
     <div
+      ref={containerRef}
+      className="transition-opacity duration-150"
       style={{
         position: 'fixed',
         right: '32px',
         top: '80px',
         zIndex: 9999,
+        opacity: scrollOpacity,
       }}
     >
       {ticketContent}

@@ -192,38 +192,9 @@ button:not(.liquid-glass-button) {
   font-size: var(--global--size);
 }
 
-/* Button Shadow Container */
+/* Button Shadow Container - DISABLED */
 .liquid-glass-shadow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Shadow pseudo-element - soft elliptical glow covering the entire button */
-.liquid-glass-shadow::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  border-radius: 999vw;
-  /* Soft elliptical glow that fully covers the text - 100% coverage */
-  background: radial-gradient(
-    ellipse 100% 100% at 50% 50%,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 255, 0.75) 35%,
-    rgba(255, 255, 255, 0.4) 70%,
-    rgba(255, 255, 255, 0.15) 90%,
-    transparent 100%
-  );
-  /* Symmetrically extend beyond button edges - increased horizontal for full text coverage */
-  top: -1em;
-  bottom: -1em;
-  left: -2em;
-  right: -2em;
-  filter: blur(2px);
-  box-sizing: border-box;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  opacity: 1;
+  display: none;
 }
 
 /* ========== BUTTON BASE STYLES ========== */
@@ -370,18 +341,7 @@ button:not(.liquid-glass-button) {
   --angle-1: -75deg;
 }
 
-/* Shadow Hover States */
-.liquid-glass-wrap:has(.liquid-glass-button:hover) .liquid-glass-shadow {
-  filter: blur(clamp(2px, 0.0625em, 6px));
-}
-
-.liquid-glass-wrap:has(.liquid-glass-button:hover) .liquid-glass-shadow::after {
-  top: -0.8em;
-  bottom: -0.8em;
-  left: -1.6em;
-  right: -1.6em;
-  opacity: 0.95;
-}
+/* Shadow Hover States - DISABLED (shadow removed) */
 
 /* Active/Press States */
 .liquid-glass-wrap:has(.liquid-glass-button:active) {
@@ -399,17 +359,7 @@ button:not(.liquid-glass-button) {
     inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.15);
 }
 
-.liquid-glass-wrap:has(.liquid-glass-button:active) .liquid-glass-shadow {
-  filter: blur(clamp(2px, 0.125em, 12px));
-}
-
-.liquid-glass-wrap:has(.liquid-glass-button:active) .liquid-glass-shadow::after {
-  top: -0.6em;
-  bottom: -0.6em;
-  left: -1.3em;
-  right: -1.3em;
-  opacity: 1;
-}
+/* Shadow Active States - DISABLED (shadow removed) */
 
 .liquid-glass-wrap:has(.liquid-glass-button:active) span {
   text-shadow: 0.025em 0.25em 0.05em rgba(0, 0, 0, 0.12);
@@ -479,9 +429,7 @@ button:not(.liquid-glass-button) {
   );
 }
 
-.liquid-glass-wrap--dark .liquid-glass-shadow::after {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-}
+/* Dark variant shadow - DISABLED */
 
 /* ============================================
    LIQUID GLASS BUTTON - SMALL VARIANT
@@ -514,4 +462,108 @@ button:not(.liquid-glass-button) {
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* ============================================
+   SOFTWARE EVOLUTION - iPad Animations
+   Smooth, GPU-accelerated transitions
+   ============================================ */
+
+/* Dot appear animation for grid */
+@keyframes dotAppear {
+  from {
+    opacity: 0;
+    transform: scale(0) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+/* Pulse animation for Era 3 dots */
+@keyframes softwarePulse {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.4) translateZ(0);
+    opacity: 0;
+  }
+}
+
+/* Shimmer animation for Era 3 line */
+@keyframes softwareShimmer {
+  from {
+    transform: translateX(-16px) translateZ(0);
+  }
+  to {
+    transform: translateX(66px) translateZ(0);
+  }
+}
+
+/* Smooth shimmer for small variant */
+@keyframes softwareShimmerSmall {
+  from {
+    transform: translateX(-16px) translateZ(0);
+  }
+  to {
+    transform: translateX(48px) translateZ(0);
+  }
+}
+
+/* Utility class for era pulse animation */
+.era-pulse {
+  animation: softwarePulse 2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.era-pulse-delay {
+  animation: softwarePulse 2s ease-in-out infinite;
+  animation-delay: 0.5s;
+  will-change: transform, opacity;
+}
+
+/* Utility class for era shimmer animation */
+.era-shimmer {
+  animation: softwareShimmer 1.2s linear infinite;
+  animation-delay: 0.3s;
+  will-change: transform;
+}
+
+.era-shimmer-small {
+  animation: softwareShimmerSmall 1.2s linear infinite;
+  animation-delay: 0.3s;
+  will-change: transform;
+}
+
+/* GPU optimization for animated elements */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ============================================
+   NAVBAR - Liquid Glass Style
+   Translucent floating navigation bar
+   ============================================ */
+
+.nav-glass {
+  background: linear-gradient(
+    -75deg,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0.15)
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.03),
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.4);
+  border: none;
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, AnimatePresence, MotionValue } from "framer-motion";
+import { useScrollDismiss } from "@/lib/useScrollDismiss";
 import FloatingAppIcons from "./FloatingAppIcons";
 import SoftwareEvolution from "./SoftwareEvolution";
 import { LiquidGlassCursor } from "@/components/liquid-glass";
@@ -14,6 +15,7 @@ import {
   SecretManifestoReveal 
 } from "./HiddenManifesto";
 import RentalInvoice from "./RentalInvoice";
+import NavbarMinimal from "@/components/NavbarMinimal";
 
 interface ManifestoSectionProps {
   onComplete?: () => void;
@@ -139,6 +141,8 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
       animate={{ opacity: isVisible ? 1 : 0 }}
       transition={{ duration: 1, ease: "easeOut" }}
     >
+      {/* Navbar - Liquid Glass */}
+      <NavbarMinimal />
 
       {/* Konami celebration */}
       <AnimatePresence>
@@ -175,7 +179,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
       {/* Server Room Easter Egg */}
       <AnimatePresence>
         {serverRoomOpen && (
-          <ServerRoomExperience onClose={() => setServerRoomOpen(false)} />
+          <ServerRoomExperience isOpen={serverRoomOpen} onClose={() => setServerRoomOpen(false)} />
         )}
       </AnimatePresence>
 
@@ -198,12 +202,12 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
       {/* Parallax Company Logos */}
       <ParallaxLogosContainer scrollProgress={scrollYProgress} />
 
-      {/* Custom cursor disabled - using default system cursor */}
-      {/* <LiquidGlassCursor 
+      {/* Custom Liquid Glass cursor */}
+      <LiquidGlassCursor 
         enabled={!konamiActivated && !serverRoomOpen && !bloatwareHellOpen && !softwareEvolutionOpen && !rentalInvoiceOpen}
         size={40}
         zIndex={5}
-      /> */}
+      />
 
 
       {/* Main Content */}
@@ -229,7 +233,6 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
                 <div className="liquid-glass-button" style={{ cursor: 'default' }}>
                   <span>Sapira AI • Manifesto</span>
                 </div>
-                <div className="liquid-glass-shadow"></div>
               </div>
             </motion.div>
 
@@ -463,15 +466,18 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
               We are Sapira.
             </motion.p>
 
-            {/* Liquid Glass Button - Petr Knoll style */}
+            {/* Liquid Glass Button - Starts immersive experience */}
             <div className="liquid-glass-wrap">
               <button 
                 className="liquid-glass-button"
-                onClick={() => router.push('/desktop')}
+                onClick={() => {
+                  if (onComplete) {
+                    onComplete();
+                  }
+                }}
               >
-                <span>Discover</span>
+                <span>Discover more</span>
               </button>
-              <div className="liquid-glass-shadow"></div>
             </div>
 
             {/* Easter egg hint */}
@@ -668,10 +674,18 @@ const SERVER_ROOM_GIFS = [
   },
 ];
 
-function ServerRoomExperience({ onClose }: { onClose: () => void }) {
+function ServerRoomExperience({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [currentGif, setCurrentGif] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
+  
+  // Scroll-based fade out - dismisses easter egg when user scrolls
+  const { opacity: scrollOpacity } = useScrollDismiss({
+    isOpen,
+    onClose,
+    fadeDistance: 120,
+    autoClose: true,
+  });
 
   // Cycle through GIFs
   useEffect(() => {
@@ -702,9 +716,10 @@ function ServerRoomExperience({ onClose }: { onClose: () => void }) {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
+        opacity: scrollOpacity,
       }}
       initial={{ opacity: 0, scale: 0.5, y: 50 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
+      animate={{ opacity: scrollOpacity, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.8, y: 30 }}
       transition={{ type: "spring", damping: 20, stiffness: 300 }}
     >
@@ -896,11 +911,9 @@ function ServerRoomExperience({ onClose }: { onClose: () => void }) {
         </motion.button>
       </div>
 
-      {/* Semi-transparent backdrop */}
+      {/* Invisible click-away area (no background change) */}
       <motion.div 
-        className="fixed inset-0 -z-10 pointer-events-auto bg-black/30 backdrop-blur-sm" 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        className="fixed inset-0 -z-10 pointer-events-auto" 
         onClick={onClose}
       />
     </motion.div>
@@ -1417,233 +1430,210 @@ const COMPANY_LOGOS = [
 // Only show first 4 logos inline
 const INLINE_LOGOS = COMPANY_LOGOS.slice(0, 4);
 
-// Parallax logo component - emerges from background based on scroll progress
+// Wabi-style random rotations - organic, not rigid
+const WABI_ROTATIONS = [-8, 5, -6, 7, -4, 6, -7, 4, -5, 8];
+
+// Wabi-style parallax speeds - different for each logo (depth effect)
+// Higher = moves more = feels "closer"
+const WABI_PARALLAX_SPEEDS = [120, 280, 180, 350, 220, 150, 300, 200, 250, 170];
+
+// Wabi-style logo component
+// Key visual features:
+// - Random rotation (organic feel)
+// - iOS-style app container (white bg, rounded, deep shadow)
+// - Differentiated parallax speeds (depth)
+// - Hover animation with movement
+// - X button to dismiss
 function ParallaxLogo({ 
   logo, 
   index, 
   position,
   scrollProgress,
+  onDismiss,
 }: { 
   logo: { name: string; Logo: React.FC<{ size?: number }>; roast: string }; 
   index: number; 
   position: { x: string; y: string };
   scrollProgress: MotionValue<number>;
+  onDismiss?: () => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Each logo has staggered scroll ranges for natural emergence
-  // Logos appear when "generic platforms" paragraph comes into view
-  const staggerOffset = index * 0.004;
-  const scrollStart = 0.08 + staggerOffset;  // When paragraph starts appearing
-  const scrollPeak = 0.12 + staggerOffset;   // Text fully visible
-  const scrollEnd = 0.22 + staggerOffset;    // Text leaving view
+  // Irregular stagger for scroll thresholds
+  const staggerOffsets = [0, 0.006, 0.014, 0.022, 0.032, 0.004, 0.010, 0.018, 0.026, 0.036];
+  const stagger = staggerOffsets[index] || 0;
   
-  // Scale: starts completely hidden, grows to full size, shrinks when leaving
-  const scale = useTransform(
-    scrollProgress,
-    [scrollStart, scrollPeak, scrollEnd, scrollEnd + 0.05],
-    [0.3, 1, 1, 0.3]
-  );
+  // Scroll-based visibility - appear LATER, disappear SOONER
+  const scrollStart = 0.06 + stagger;
+  const scrollPeak = 0.10 + stagger;
+  const scrollFadeStart = 0.18 + stagger;
+  const scrollEnd = 0.22 + stagger;
   
-  // Opacity: invisible -> visible -> fade out when text leaves view
+  // Opacity controlled by scroll
   const opacity = useTransform(
     scrollProgress,
-    [scrollStart, scrollPeak, scrollEnd, scrollEnd + 0.05],
-    [0, 0.85, 0.85, 0]
+    [scrollStart, scrollPeak, scrollFadeStart, scrollEnd],
+    [0, 1, 1, 0]
   );
   
-  // Parallax Y movement: subtle upward drift as user scrolls
-  const y = useTransform(
+  // DIFFERENTIATED parallax
+  const parallaxSpeed = WABI_PARALLAX_SPEEDS[index] || 200;
+  const yParallax = useTransform(
     scrollProgress,
     [0, 1],
-    [40, -60]
+    [0, -parallaxSpeed]
   );
+  
+  // Random rotation for organic feel
+  const baseRotation = WABI_ROTATIONS[index] || 0;
+  // Hover adds extra rotation movement
+  const hoverRotation = isHovered ? baseRotation + (index % 2 === 0 ? 4 : -4) : baseRotation;
 
-  // Position card based on screen position - always orient towards center
+  // Tooltip orientation
   const isLeftSide = parseFloat(position.x) < 50;
   
   return (
     <motion.div
-      className="absolute pointer-events-auto cursor-pointer"
+      className="absolute pointer-events-auto cursor-pointer group"
       style={{
         left: position.x,
         top: position.y,
-        x: '-50%',
-        y: '-50%',
-        scale,
+        y: yParallax,
         opacity,
+      }}
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={isHovered ? {
+        scale: 1,
+        rotate: [baseRotation - 1.5, baseRotation + 1.5, baseRotation - 1, baseRotation + 1, baseRotation],
+        x: [-1, 1, -0.5, 0.5, 0],
+        transition: {
+          rotate: {
+            repeat: Infinity,
+            duration: 0.3,
+            ease: "easeInOut",
+          },
+          x: {
+            repeat: Infinity,
+            duration: 0.3,
+            ease: "easeInOut",
+          },
+          scale: { type: "spring", stiffness: 300, damping: 20 },
+        }
+      } : {
+        scale: 1,
+        rotate: baseRotation,
+        x: 0,
+      }}
+      exit={{ 
+        scale: 0, 
+        opacity: 0,
+        rotate: baseRotation + 20,
+        transition: { duration: 0.3, ease: "easeIn" }
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <motion.div
-        style={{ y }}
+      {/* iOS-style app container - DEEPER shadow for 3D effect */}
+      <div 
+        className="relative flex items-center justify-center bg-white"
+        style={{
+          width: 72,
+          height: 72,
+          marginLeft: -36,
+          marginTop: -36,
+          borderRadius: '22%',
+          // DEEPER shadow for more 3D effect
+          boxShadow: isHovered 
+            ? '0 32px 64px rgba(0,0,0,0.25), 0 16px 32px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.1)'
+            : '0 24px 48px rgba(0,0,0,0.18), 0 12px 24px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05)',
+          transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+          transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',
+        }}
       >
-        {/* Soft shadow underneath */}
-        <motion.div
-          className="absolute left-1/2 rounded-full pointer-events-none"
-          style={{
-            width: 36,
-            height: 10,
-            marginLeft: -18,
-            marginTop: 22,
-            background: 'radial-gradient(ellipse, rgba(0,0,0,0.12) 0%, transparent 70%)',
-            filter: 'blur(4px)',
-          }}
-          animate={{
-            scale: isHovered ? 1.25 : 1,
-            opacity: isHovered ? 0.2 : 0.35,
-          }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-        />
+        <logo.Logo size={48} />
         
-        {/* Logo with hover effect */}
-        <motion.div
-          className="relative flex items-center justify-center"
-          style={{
-            width: 52,
-            height: 52,
-            marginLeft: -26,
-            marginTop: -26,
-          }}
-          animate={{
-            scale: isHovered ? 1.12 : 1,
-            y: isHovered ? -4 : 0,
-          }}
-          transition={{ 
-            type: "spring",
-            stiffness: 400,
-            damping: 25
-          }}
-        >
-          <div
-            style={{
-              filter: isHovered 
-                ? 'drop-shadow(0 12px 28px rgba(0,0,0,0.2))'
-                : 'drop-shadow(0 6px 16px rgba(0,0,0,0.1))',
-              transition: 'filter 0.3s ease',
+        {/* X button to dismiss - appears on hover */}
+        {isHovered && onDismiss && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDismiss();
+            }}
+            className="absolute -top-2 -right-2 w-6 h-6 bg-white hover:bg-gray-100 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 border border-gray-200"
+            style={{ 
+              zIndex: 100,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
             }}
           >
-            <logo.Logo size={48} />
-          </div>
-        </motion.div>
+            <span className="text-gray-800 text-sm font-bold leading-none">×</span>
+          </button>
+        )}
+      </div>
         
-        {/* Liquid Glass Card on hover - oriented towards center */}
-        <AnimatePresence>
-          {isHovered && (
-            <motion.div
-              className="absolute pointer-events-none"
-              style={{
-                top: -10,
-                ...(isLeftSide ? { left: 60 } : { right: 60 }),
-                minWidth: 180,
-              }}
-              initial={{ opacity: 0, x: isLeftSide ? -15 : 15, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: isLeftSide ? -15 : 15, scale: 0.9 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 400,
-                damping: 25
-              }}
-            >
-              {/* Liquid Glass Card */}
-              <div 
-                className="relative rounded-2xl overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.65) 100%)',
-                  backdropFilter: 'blur(20px) saturate(180%)',
-                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                  boxShadow: `
-                    0 8px 32px rgba(0,0,0,0.12),
-                    0 2px 8px rgba(0,0,0,0.08),
-                    inset 0 1px 0 rgba(255,255,255,0.9),
-                    inset 0 -1px 0 rgba(0,0,0,0.05)
-                  `,
-                  border: '1px solid rgba(255,255,255,0.6)',
-                }}
-              >
-                {/* Inner highlight */}
-                <div 
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 50%)',
-                    borderRadius: 'inherit',
-                  }}
-                />
-                
-                {/* Content */}
-                <div className="relative px-4 py-3">
-                  {/* Logo name */}
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <logo.Logo size={16} />
-                    <span 
-                      className="font-semibold text-sm"
-                      style={{ color: '#1a1a1a' }}
-                    >
-                      {logo.name}
-                    </span>
-                  </div>
-                  
-                  {/* Roast message */}
-                  <p 
-                    className="text-xs leading-relaxed"
-                    style={{ 
-                      color: '#666',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    {logo.roast}
-                  </p>
-                  
-                  {/* Bottom tag */}
-                  <div 
-                    className="mt-2 pt-2 border-t flex items-center gap-1"
-                    style={{ borderColor: 'rgba(0,0,0,0.08)' }}
-                  >
-                    <span className="text-[10px] font-medium" style={{ color: '#999' }}>
-                      Sapira automates this →
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+      {/* Tooltip with name */}
+      {isHovered && (
+        <div
+          className="absolute pointer-events-none z-50"
+          style={{
+            top: -12,
+            ...(isLeftSide ? { left: 72 } : { right: 72 }),
+          }}
+        >
+          <div className="bg-white rounded-lg px-3 py-2 shadow-xl border border-gray-100 whitespace-nowrap">
+            <span className="text-xs font-medium text-gray-800">{logo.name}</span>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
 
-// Fixed positions for parallax logos - distributed organically on both sides
+// Fixed positions for parallax logos - Wabi-style distribution
+// CLOSER TO TEXT - grouped near the content
 const LOGO_POSITIONS: Array<{ x: string; y: string }> = [
-  // Left side (5 logos)
-  { x: '8%', y: '18%' },
-  { x: '12%', y: '38%' },
-  { x: '6%', y: '55%' },
-  { x: '14%', y: '72%' },
-  { x: '9%', y: '88%' },
-  // Right side (5 logos)
-  { x: '92%', y: '22%' },
-  { x: '88%', y: '42%' },
-  { x: '94%', y: '58%' },
-  { x: '86%', y: '75%' },
-  { x: '91%', y: '90%' },
+  // Left side (5 logos) - closer to center
+  { x: '15%', y: '24%' },
+  { x: '18%', y: '40%' },
+  { x: '14%', y: '54%' },
+  { x: '20%', y: '68%' },
+  { x: '16%', y: '80%' },
+  // Right side (5 logos) - closer to center
+  { x: '85%', y: '28%' },
+  { x: '82%', y: '44%' },
+  { x: '86%', y: '58%' },
+  { x: '80%', y: '72%' },
+  { x: '84%', y: '84%' },
 ];
 
 // Parallax logos container - rendered outside paragraph context
 function ParallaxLogosContainer({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
+  const [dismissedLogos, setDismissedLogos] = useState<Set<string>>(new Set());
+  
+  const handleDismiss = (logoName: string) => {
+    setDismissedLogos(prev => new Set([...prev, logoName]));
+  };
+  
   return (
     <div className="fixed inset-0 pointer-events-none z-[100]">
-      {COMPANY_LOGOS.map((logo, i) => (
-        <ParallaxLogo
-          key={`parallax-${logo.name}`}
-          logo={logo}
-          index={i}
-          position={LOGO_POSITIONS[i]}
-          scrollProgress={scrollProgress}
-        />
-      ))}
+      <AnimatePresence>
+        {COMPANY_LOGOS.map((logo, i) => (
+          !dismissedLogos.has(logo.name) && (
+            <ParallaxLogo
+              key={`parallax-${logo.name}`}
+              logo={logo}
+              index={i}
+              position={LOGO_POSITIONS[i]}
+              scrollProgress={scrollProgress}
+              onDismiss={() => handleDismiss(logo.name)}
+            />
+          )
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

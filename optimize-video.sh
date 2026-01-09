@@ -21,3 +21,4 @@ ffmpeg -i "$INPUT" \
 echo "Done! Original: $(du -h "$INPUT" | cut -f1)"
 echo "Optimized: $(du -h "$OUTPUT" | cut -f1)"
 
+
