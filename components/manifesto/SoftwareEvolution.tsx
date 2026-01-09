@@ -42,8 +42,8 @@ const ERAS = [
 type Phase = "intro" | "era1" | "era2" | "era3" | "final";
 
 // Smooth easing curves for cinematic feel
-const smoothEasing = [0.4, 0, 0.2, 1];
-const gentleEasing = [0.25, 0.1, 0.25, 1];
+const smoothEasing = [0.4, 0, 0.2, 1] as const;
+const gentleEasing = [0.25, 0.1, 0.25, 1] as const;
 
 export default function SoftwareEvolution({ isOpen, onClose }: SoftwareEvolutionProps) {
   const [phase, setPhase] = useState<Phase>("intro");
