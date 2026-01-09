@@ -297,8 +297,8 @@ function SingleEraView({ era, eraIndex, transitionDuration }: SingleEraViewProps
   }, [era.id]); // Depend on era.id to properly reset on era change
 
   // Smoother easing for internal animations
-  const smoothEase = [0.4, 0, 0.2, 1];
-  const gentleEase = [0.25, 0.1, 0.25, 1];
+  const smoothEase = [0.4, 0, 0.2, 1] as const;
+  const gentleEase = [0.25, 0.1, 0.25, 1] as const;
 
   return (
     <motion.div
@@ -475,8 +475,8 @@ interface FinalSlideViewProps {
 
 function FinalSlideView({ onClose, transitionDuration }: FinalSlideViewProps) {
   // Smoother easing
-  const smoothEase = [0.4, 0, 0.2, 1];
-  const gentleEase = [0.25, 0.1, 0.25, 1];
+  const smoothEase = [0.4, 0, 0.2, 1] as const;
+  const gentleEase = [0.25, 0.1, 0.25, 1] as const;
   
   return (
     <motion.div
@@ -610,7 +610,7 @@ const visualSpring = {
   mass: 0.8,
 };
 
-const gentleEase = [0.25, 0.1, 0.25, 1];
+const gentleEase = [0.25, 0.1, 0.25, 1] as const;
 
 function EraVisual1({ small = false }: { small?: boolean }) {
   const dotSize = small ? "w-9 h-9 md:w-12 md:h-12" : "w-14 h-14 md:w-16 md:h-16";
