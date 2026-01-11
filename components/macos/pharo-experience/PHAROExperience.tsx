@@ -97,6 +97,7 @@ const SECTIONS = [
   { id: "summary", label: "Summary", startIndex: 20 },
 ];
 
+
 // Example workflows discovered
 const DISCOVERED_WORKFLOWS = [
   { 
@@ -133,7 +134,7 @@ export default function PHAROExperience({ isActive, onComplete }: PHAROExperienc
   const [phaseIndex, setPhaseIndex] = useState(-1);
   const [isPaused, setIsPaused] = useState(false);
   const [isHoveringNav, setIsHoveringNav] = useState(false);
-
+  
   // Navigate to specific index
   const goToIndex = useCallback((index: number) => {
     if (index >= 0 && index < PHASE_SEQUENCE.length) {

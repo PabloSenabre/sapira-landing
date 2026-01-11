@@ -264,7 +264,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
         </section>
 
         {/* Section 2: The Problem */}
-        <section className="py-24">
+        <section className="pb-16">
           <ManifestoParagraph delay={0} konamiMode={konamiActivated}>
             <p>
               We reached the limit of standardized solutions.
@@ -286,7 +286,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
         </section>
 
         {/* Section 3: The Contrast */}
-        <section className="py-24">
+        <section className="pb-16">
           <ManifestoParagraph delay={0} konamiMode={konamiActivated}>
             <p>
               We choose our <em>mission</em>. Our <em>culture</em>. Our <em>strategy</em>.
@@ -296,7 +296,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
           <ManifestoParagraph delay={0.1} konamiMode={konamiActivated}>
             <p>
               But our software? Still a rental.
-              <span className="block mt-4">
+              <span className="block mt-3">
                 Made for <ClickableHighlight onClick={() => setSoftwareEvolutionOpen(true)}>billions</ClickableHighlight>. <strong>Not for <HiddenWord id="you" konamiMode={konamiActivated}>you</HiddenWord>.</strong>
               </span>
             </p>
@@ -311,11 +311,10 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
               />
             )}
           </AnimatePresence>
-
-          </section>
+        </section>
 
         {/* Section 4: The Vision */}
-        <section className="py-24">
+        <section className="pb-16">
           <ManifestoParagraph delay={0} konamiMode={konamiActivated}>
             <p>
               <HiddenWord id="when" konamiMode={konamiActivated}>When</HiddenWord> software is oriented around <em>your</em> business…
@@ -385,7 +384,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
         </AnimatePresence>
 
         {/* Section 6: The Solution */}
-        <section className="py-24 relative">
+        <section className="pb-16 relative">
           <ManifestoParagraph delay={0} konamiMode={konamiActivated}>
             <p>
               Operating systems based on <strong>your logic</strong>, <strong>your data</strong>, 
@@ -411,7 +410,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
         </section>
 
         {/* Section 7: The Future */}
-        <section className="py-24">
+        <section className="pb-16">
           <ManifestoParagraph delay={0} konamiMode={konamiActivated}>
             <p>
               Someday, we'll look back on traditional SaaS like{" "}
@@ -451,7 +450,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
               }}
             >
               A new era of<br />
-              <span className="italic">personal software</span><br />
+              <span className="italic">enterprise software</span><br />
               is here.
             </h2>
 
@@ -467,7 +466,7 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
             </motion.p>
 
             {/* Liquid Glass Button - Starts immersive experience */}
-            <div className="liquid-glass-wrap">
+            <div className="liquid-glass-wrap liquid-glass-wrap--small">
               <button 
                 className="liquid-glass-button"
                 onClick={() => {
@@ -525,29 +524,58 @@ export default function ManifestoSection({ onComplete }: ManifestoSectionProps) 
   );
 }
 
+// Typography variants for A/B testing different font proposals
+// Bold sans-serif options - potent, heavy, high quality
+type FontVariant = 'inter' | 'manrope' | 'sora' | 'spaceGrotesk' | 'default';
+
+const FONT_FAMILIES: Record<FontVariant, string> = {
+  inter: "var(--font-inter), system-ui, sans-serif",
+  manrope: "var(--font-manrope), system-ui, sans-serif",
+  sora: "var(--font-sora), system-ui, sans-serif",
+  spaceGrotesk: "var(--font-space-grotesk), system-ui, sans-serif",
+  default: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+};
+
+// Custom font weights for each variant - Inter gets heavier
+const FONT_WEIGHTS: Record<FontVariant, number> = {
+  inter: 600, // Semibold - potent but not too heavy
+  manrope: 500,
+  sora: 500,
+  spaceGrotesk: 500,
+  default: 400,
+};
+
 // Paragraph component with consistent styling
+// Now supports different font variants for comparison
 function ManifestoParagraph({ 
   children, 
   delay = 0,
-  konamiMode = false
+  konamiMode = false,
+  fontVariant = 'default',
 }: { 
   children: React.ReactNode; 
   delay?: number;
   konamiMode?: boolean;
+  fontVariant?: FontVariant;
 }) {
+  // Get font weight from variant config
+  const fontWeight = FONT_WEIGHTS[fontVariant];
+  
   return (
     <motion.div
-      className="mb-16 last:mb-0"
+      // Reduced from mb-16 (64px) to mb-10 (40px) for better visual rhythm
+      className="mb-10 last:mb-0"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
       viewport={{ once: true, margin: "-100px" }}
       style={{
-        fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        fontFamily: FONT_FAMILIES[fontVariant],
         fontSize: "clamp(1.5rem, 3vw, 2rem)",
-        lineHeight: 1.6,
+        lineHeight: 1.5, // Tighter for sans-serif
+        letterSpacing: "-0.02em", // More negative tracking for Inter
         color: konamiMode ? "#e5e5e5" : "#1a1a1a",
-        fontWeight: 400,
+        fontWeight,
       }}
     >
       {children}

@@ -7,8 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { href: "/", label: "Our Story" },
-  { href: "/platform", label: "Our Platform" },
   { href: "/methodology", label: "Our Methodology" },
+  { href: "/platform", label: "Our Platform" },
+  { href: "/start", label: "Start" },
 ];
 
 export default function NavbarMinimal() {
@@ -82,34 +83,31 @@ export default function NavbarMinimal() {
             scrolled ? "nav-glass rounded-full px-6 py-3" : ""
           }`}>
           
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <svg
-                width="28"
-                height="28"
-                viewBox="0 0 28 28"
-                fill="none"
-                className="transition-transform duration-300 group-hover:scale-105"
-              >
-                <circle
-                  cx="14"
-                  cy="14"
-                  r="12"
-                  stroke="#1a1a1a"
-                  strokeWidth="1.5"
-                  fill="none"
-                  opacity="0.5"
-                />
-                <circle cx="14" cy="14" r="4" fill="#1a1a1a" opacity="0.8" />
-              </svg>
-              <span
-                className="text-lg font-medium tracking-wide text-[#1a1a1a]"
+            {/* Logo - Elegant dark badge with serif typography */}
+            <Link href="/" className="flex items-center group">
+              <motion.div 
+                className="flex items-center justify-center rounded-[6px] overflow-hidden"
                 style={{
-                  fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  padding: "6px 14px",
+                  background: "linear-gradient(145deg, #1a1a1f 0%, #252530 40%, #1f1f25 100%)",
+                  boxShadow: "inset 0 0.5px 0.5px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.15)",
                 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Sapira
-              </span>
+                <span 
+                  className="select-none"
+                  style={{
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontSize: 14,
+                    fontWeight: 400,
+                    letterSpacing: "0.02em",
+                    color: "rgba(255,255,255,0.92)",
+                  }}
+                >
+                  Sapira
+                </span>
+              </motion.div>
             </Link>
 
             {/* Desktop Navigation Links */}

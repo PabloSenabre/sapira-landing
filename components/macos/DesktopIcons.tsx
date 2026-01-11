@@ -51,7 +51,7 @@ const legacyApps = [
   { id: "notion", label: "Notion", logoUrl: "https://cdn.worldvectorlogo.com/logos/notion-2.svg" },
 ];
 
-// Locked legacy icon component - compact version for grid
+// Locked legacy icon component - minimalist version for grid
 function LockedIcon({ 
   label, 
   logoUrl,
@@ -71,9 +71,8 @@ function LockedIcon({
   const { isSapiraHovered } = useContext(HoverContext);
   const isLight = theme === "light";
 
-  // When Sapira is hovered, apps "organize" (become more visible and colored)
-  const organizedOpacity = isSapiraHovered ? 0.95 : 0.7;
-  const organizedGrayscale = isSapiraHovered ? "grayscale(30%)" : "grayscale(100%)";
+  // Minimalist light gray style - very subtle, clean appearance
+  const baseOpacity = isSapiraHovered ? 0.65 : 0.45;
 
   return (
     <motion.button
@@ -81,50 +80,39 @@ function LockedIcon({
       onDoubleClick={onDoubleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.9 }}
       animate={{ 
         opacity: 1, 
         scale: 1,
       }}
-      whileHover={{ scale: 1.08 }}
+      whileHover={{ scale: 1.05 }}
       transition={{ 
         duration: 0.2,
-        delay: index * 0.015,
+        delay: index * 0.012,
       }}
     >
-      {/* Icon container */}
+      {/* Minimalist icon container - clean, no heavy shadows */}
       <motion.div 
-        className="relative w-12 h-12 rounded-xl flex items-center justify-center p-1.5"
+        className="relative w-11 h-11 rounded-xl flex items-center justify-center p-2"
         style={{
           background: isLight 
-            ? `linear-gradient(145deg, rgba(255,255,255,0.98) 0%, rgba(248,248,250,0.95) 100%)`
-            : `linear-gradient(145deg, rgba(120,120,135,0.98) 0%, rgba(100,100,115,0.95) 100%)`,
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
+            ? "rgba(255,255,255,0.6)"
+            : "rgba(100,100,110,0.8)",
           border: isLight
-            ? "1px solid rgba(255,255,255,0.9)"
-            : "1px solid rgba(255,255,255,0.35)",
-          boxShadow: isLight
-            ? "0 4px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)"
-            : "0 8px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2)",
-        }}
-        animate={{
-          boxShadow: isSapiraHovered
-            ? isLight
-              ? "0 6px 20px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,1)"
-              : "0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.12)"
-            : undefined,
+            ? "1px solid rgba(0,0,0,0.04)"
+            : "1px solid rgba(255,255,255,0.15)",
         }}
       >
-        {/* Logo image */}
+        {/* Logo image - light gray minimalist style */}
         <motion.div 
           className="w-full h-full relative"
           animate={{
+            opacity: isHovered ? 0.85 : baseOpacity,
             filter: isHovered 
-              ? "grayscale(0%) brightness(1.1)" 
-              : `${organizedGrayscale} opacity(${organizedOpacity})`,
+              ? "grayscale(60%) brightness(0.9)" 
+              : "grayscale(100%) brightness(0.85) contrast(0.9)",
           }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.2 }}
         >
           {!imageError ? (
             <Image
@@ -137,7 +125,7 @@ function LockedIcon({
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-gray-400">
+            <div className="w-full h-full flex items-center justify-center text-[10px] font-medium text-gray-400/60">
               {label.charAt(0)}
             </div>
           )}
@@ -280,6 +268,7 @@ function SapiraSpecialIcon({ theme = "light", onDoubleClick }: { theme?: Theme; 
   return (
     <motion.button
       className="flex flex-col items-center gap-3 p-3 rounded-xl cursor-pointer"
+      onClick={onDoubleClick}
       onDoubleClick={onDoubleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

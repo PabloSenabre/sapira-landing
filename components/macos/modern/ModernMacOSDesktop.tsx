@@ -10,7 +10,6 @@ import AIOApp from "../apps/AIOApp";
 import FaroApp from "../apps/FaroApp";
 import EquityApp from "../apps/EquityApp";
 import WhatWeDoApp from "../apps/WhatWeDoApp";
-import AboutApp from "../apps/AboutApp";
 import ContactApp from "../apps/ContactApp";
 import FinderApp from "../apps/FinderApp";
 import SapiraAIChat from "../apps/SapiraAIChat";
@@ -31,7 +30,6 @@ const defaultApps = [
   { id: "whatwedo", title: "What We Do", icon: "whatwedo", featured: true },
   { id: "faro", title: "Pharo Platform", icon: "faro", featured: true },
   { id: "equity", title: "Equity", icon: "equity", featured: true },
-  { id: "about", title: "About Sapira", icon: "about" },
   { id: "contact", title: "Contact", icon: "contact" },
   { id: "sapira-ai", title: "Sapira AI", icon: "sapira-ai", featured: true },
 ];
@@ -479,8 +477,6 @@ function ModernMacOSDesktopInner({ isVisible }: ModernMacOSDesktopProps) {
         return <FaroApp />;
       case "equity":
         return <EquityApp />;
-      case "about":
-        return <AboutApp />;
       case "contact":
         return <ContactApp />;
       case "sapira-ai":

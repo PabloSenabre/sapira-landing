@@ -7,7 +7,6 @@ import XPIcon from "./XPIcon";
 import XPStartMenu from "./XPStartMenu";
 import CrashExperience from "./CrashExperience";
 import BlueScreenOfDeath from "./BlueScreenOfDeath";
-import { ManifestoSection } from "../manifesto";
 import PHAROExperience from "../macos/pharo-experience/PHAROExperience";
 
 // Desktop icons configuration - Clean enterprise layout with Real Logos
@@ -260,7 +259,7 @@ interface SelectionRect {
 export default function WindowsXPDesktop({ onCrashTrigger, onLearnSapiraClick }: WindowsXPDesktopProps) {
   const [selectedIcons, setSelectedIcons] = useState<string[]>([]);
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
-  const [experienceState, setExperienceState] = useState<'desktop' | 'crashing' | 'bsod' | 'manifesto'>('desktop');
+  const [experienceState, setExperienceState] = useState<'desktop' | 'crashing' | 'bsod'>('desktop');
   const [selectionRect, setSelectionRect] = useState<SelectionRect | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [pharoExperienceActive, setPharoExperienceActive] = useState(false);
@@ -375,29 +374,19 @@ export default function WindowsXPDesktop({ onCrashTrigger, onLearnSapiraClick }:
     }
   }, []);
 
-  // Handle manifesto completion - return to desktop or call callback
-  const handleManifestoComplete = () => {
-    if (onLearnSapiraClick) {
-      onLearnSapiraClick();
-    } else {
-      // Return to desktop if no callback provided
-      setExperienceState('desktop');
-    }
-  };
-
   // If crashing, show crash experience (error popups chaos)
   if (experienceState === 'crashing') {
     return <CrashExperience onComplete={() => setExperienceState('bsod')} />;
   }
 
-  // If BSOD, show the Blue Screen of Death
+  // If BSOD, show the Blue Screen of Death - then go directly to macOS
   if (experienceState === 'bsod') {
-    return <BlueScreenOfDeath onComplete={() => setExperienceState('manifesto')} />;
-  }
-
-  // Render Manifesto when in manifesto state (takes over entire page for scroll)
-  if (experienceState === 'manifesto') {
-    return <ManifestoSection onComplete={handleManifestoComplete} />;
+    return <BlueScreenOfDeath onComplete={() => {
+      // Go directly to macOS (new OS) - skip manifesto
+      if (onLearnSapiraClick) {
+        onLearnSapiraClick();
+      }
+    }} />;
   }
   
   // Calculate selection rectangle dimensions for rendering
@@ -412,9 +401,26 @@ export default function WindowsXPDesktop({ onCrashTrigger, onLearnSapiraClick }:
   
   return (
     <>
+      {/* Windows XP cursor style */}
+      <style jsx global>{`
+        .xp-cursor-active,
+        .xp-cursor-active * {
+          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath fill='%23000' d='M6.5 1L6.5 28.5L12.5 22.5L17.5 31L21 29L16 20.5L24.5 20.5Z'/%3E%3Cpath fill='%23FFF' d='M8 4L8 24.5L12 20.5L16.5 28.5L18.5 27.5L14 19L22 19Z'/%3E%3C/svg%3E") 0 0, auto !important;
+        }
+        .xp-cursor-active button,
+        .xp-cursor-active a,
+        .xp-cursor-active [role='button'],
+        .xp-cursor-active *[onclick],
+        .xp-cursor-active .pointer,
+        .xp-cursor-active button *,
+        .xp-cursor-active a * {
+          cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath fill='%23000' d='M10 1L10 3L8 3L8 5L6 5L6 11L8 11L8 13L10 13L10 15L12 15L12 17L10 17L10 19L8 19L8 21L6 21L6 23L8 23L8 25L10 25L10 27L12 27L12 29L14 29L14 27L16 27L16 25L18 25L18 23L20 23L20 25L22 25L22 27L24 27L24 25L26 25L26 23L24 23L24 21L22 21L22 19L20 19L20 17L18 17L18 15L20 15L20 13L22 13L22 11L24 11L24 5L22 5L22 3L20 3L20 1Z'/%3E%3Cpath fill='%23FFF' d='M12 3L12 5L10 5L10 9L12 9L12 11L14 11L14 13L12 13L12 15L10 15L10 17L8 17L8 19L10 19L10 21L12 21L12 23L14 23L14 21L16 21L16 19L18 19L18 21L20 21L20 23L22 23L22 21L20 21L20 19L18 19L18 17L16 17L16 15L18 15L18 13L20 13L20 11L22 11L22 7L20 7L20 5L18 5L18 3Z'/%3E%3C/svg%3E") 5 0, pointer !important;
+        }
+      `}</style>
+
       <div 
         ref={desktopRef}
-        className="fixed inset-0 overflow-hidden font-tahoma select-none"
+        className="fixed inset-0 overflow-hidden font-tahoma select-none xp-cursor-active"
         onClick={handleDesktopClick}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}

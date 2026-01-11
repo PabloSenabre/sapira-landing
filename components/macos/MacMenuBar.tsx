@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useLiquidGlassOptional } from "./liquid-glass";
 
 interface MacMenuBarProps {
@@ -40,6 +41,7 @@ export default function MacMenuBar({ activeApp, onNavigate, theme = "light" }: M
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const router = useRouter();
   
   const isLight = theme === "light";
   
@@ -117,7 +119,6 @@ export default function MacMenuBar({ activeApp, onNavigate, theme = "light" }: M
   const menuItems = [
     { id: "finder", label: "Finder" },
     { id: "sapira-ai", label: "Sapira AI", featured: true },
-    { id: "about", label: "About" },
     { id: "contact", label: "Contact" },
   ];
 
@@ -149,13 +150,15 @@ export default function MacMenuBar({ activeApp, onNavigate, theme = "light" }: M
     >
       {/* Left side - Sapira Logo, App Name, Menu Items */}
       <div className="flex items-center h-full gap-px">
-        {/* Sapira Logo */}
+        {/* Sapira Logo - Click to go home */}
         <motion.button 
-          className="h-[22px] px-2.5 mx-0.5 flex items-center justify-center transition-all duration-150"
+          className="h-[22px] px-2.5 mx-0.5 flex items-center justify-center transition-all duration-150 cursor-pointer"
           style={getItemStyle("sapira")}
           onMouseEnter={() => setHoveredItem("sapira")}
           onMouseLeave={() => setHoveredItem(null)}
+          onClick={() => router.push("/")}
           whileTap={{ scale: 0.97 }}
+          title="Go to Home"
         >
           <SapiraMenuIcon />
         </motion.button>

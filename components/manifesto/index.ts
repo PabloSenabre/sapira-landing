@@ -1,4 +1,5 @@
 export { default as ManifestoSection } from "./ManifestoSection";
+export { default as ManifestoMobile } from "./ManifestoMobile";
 export { default as FloatingAppIcons } from "./FloatingAppIcons";
 export { 
   HiddenManifestoProvider, 

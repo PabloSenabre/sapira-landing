@@ -88,118 +88,152 @@ const ModernAppIcon = ({
         );
       
       case "whatwedo":
-        // What We Do - PHARO System with three pillars
+        // What We Do - Methodology Flow (Light → Forge → Tower)
         return (
           <div 
             className="w-full h-full rounded-[22%] relative overflow-hidden"
             style={{
-              background: isFeatured 
-                ? "linear-gradient(135deg, #0D1117 0%, #161B22 50%, #21262D 100%)"
-                : "linear-gradient(135deg, #374151 0%, #1F2937 100%)",
+              background: "linear-gradient(145deg, #0a0a0a 0%, #141414 50%, #1a1a1a 100%)",
               boxShadow: `
-                0 4px 12px rgba(0,200,200,0.2),
-                inset 0 1px 1px rgba(255,255,255,0.1),
-                inset 0 -1px 2px rgba(0,0,0,0.2)
+                0 4px 16px rgba(0,212,212,0.15),
+                0 0 0 0.5px rgba(0,212,212,0.1),
+                inset 0 1px 1px rgba(255,255,255,0.05),
+                inset 0 -1px 2px rgba(0,0,0,0.3)
               `,
             }}
           >
-            <svg viewBox="0 0 48 48" className="w-full h-full p-2">
-              {/* Three pillars: Light, Forge, Tower */}
-              {/* Light bulb */}
-              <circle cx="12" cy="14" r="5" fill="#00D4D4" opacity="0.8"/>
-              <rect x="10" y="20" width="4" height="4" rx="0.5" fill="#00D4D4" opacity="0.6"/>
-              {/* Forge/fountain */}
-              <path d="M24 10 L24 18" stroke="#00D4D4" strokeWidth="2.5" strokeLinecap="round" opacity="0.9"/>
-              <path d="M21 16 L24 10 L27 16" stroke="#00D4D4" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.7"/>
-              <rect x="20" y="20" width="8" height="4" rx="0.5" fill="#00D4D4" opacity="0.6"/>
-              {/* Tower */}
-              <path d="M36 8 L36 18" stroke="#00D4D4" strokeWidth="2" strokeLinecap="round"/>
-              <circle cx="36" cy="6" r="3" fill="#00D4D4" opacity="0.9"/>
-              <rect x="33" y="20" width="6" height="4" rx="0.5" fill="#00D4D4" opacity="0.6"/>
-              {/* Base platform */}
-              <rect x="6" y="28" width="36" height="10" rx="2" fill="rgba(255,255,255,0.1)"/>
-              <rect x="8" y="31" width="32" height="4" rx="1" fill="#00D4D4" opacity="0.4"/>
+            <svg viewBox="0 0 48 48" className="w-full h-full p-1.5">
+              {/* Circular flow representing methodology */}
+              {/* Outer ring */}
+              <circle cx="24" cy="24" r="18" stroke="#00D4D4" strokeWidth="1" fill="none" opacity="0.2"/>
+              <circle cx="24" cy="24" r="14" stroke="#00D4D4" strokeWidth="0.5" fill="none" opacity="0.15"/>
+              
+              {/* Three phase nodes */}
+              {/* Light - top */}
+              <circle cx="24" cy="8" r="4" fill="#00D4D4" opacity="0.9"/>
+              <circle cx="24" cy="8" r="2" fill="white" opacity="0.8"/>
+              
+              {/* Forge - bottom left */}
+              <circle cx="10" cy="34" r="4" fill="#00D4D4" opacity="0.7"/>
+              <path d="M8 34 L10 31 L12 34" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.8"/>
+              
+              {/* Tower - bottom right */}
+              <circle cx="38" cy="34" r="4" fill="#00D4D4" opacity="0.7"/>
+              <rect x="36.5" y="32" width="3" height="5" rx="0.5" fill="white" opacity="0.8"/>
+              
+              {/* Flow arrows */}
+              <path d="M20 11 Q12 18 12 28" stroke="#00D4D4" strokeWidth="1.5" fill="none" opacity="0.5" strokeLinecap="round"/>
+              <path d="M28 11 Q36 18 36 28" stroke="#00D4D4" strokeWidth="1.5" fill="none" opacity="0.5" strokeLinecap="round"/>
+              <path d="M16 36 L32 36" stroke="#00D4D4" strokeWidth="1.5" fill="none" opacity="0.4" strokeLinecap="round"/>
+              
+              {/* Center glow */}
+              <circle cx="24" cy="24" r="6" fill="url(#wwdGlow)" opacity="0.3"/>
+              <defs>
+                <radialGradient id="wwdGlow">
+                  <stop offset="0%" stopColor="#00D4D4"/>
+                  <stop offset="100%" stopColor="transparent"/>
+                </radialGradient>
+              </defs>
             </svg>
           </div>
         );
       
       case "faro":
+        // PHARO Platform - Dashboard/Grid aesthetic
         return (
           <div 
             className="w-full h-full rounded-[22%] relative overflow-hidden"
             style={{
-              background: isFeatured 
-                ? "linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%)"
-                : isLocked 
-                ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
-                : "linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)",
+              background: "linear-gradient(145deg, #0a0a0a 0%, #141414 50%, #1a1a1a 100%)",
               boxShadow: `
-                0 4px 12px ${isFeatured ? "rgba(0,200,200,0.2)" : isLocked ? "rgba(107,114,128,0.3)" : "rgba(245,158,11,0.35)"},
-                inset 0 1px 1px rgba(255,255,255,0.4),
-                inset 0 -1px 2px rgba(0,0,0,0.1)
+                0 4px 16px rgba(0,212,212,0.15),
+                0 0 0 0.5px rgba(0,212,212,0.1),
+                inset 0 1px 1px rgba(255,255,255,0.05),
+                inset 0 -1px 2px rgba(0,0,0,0.3)
               `,
             }}
           >
             <svg viewBox="0 0 48 48" className="w-full h-full p-2">
-              {/* P for Pharo */}
-              <rect x="14" y="10" width="20" height="28" rx="2" fill="rgba(0,200,200,0.1)" stroke="#00D4D4" strokeWidth="1" opacity="0.5"/>
-              <text x="24" y="30" textAnchor="middle" fill="#00D4D4" fontSize="20" fontWeight="300" fontFamily="Georgia, serif">P</text>
+              {/* Grid pattern - platform aesthetic */}
+              {/* Horizontal lines */}
+              <line x1="6" y1="14" x2="42" y2="14" stroke="#00D4D4" strokeWidth="0.5" opacity="0.2"/>
+              <line x1="6" y1="24" x2="42" y2="24" stroke="#00D4D4" strokeWidth="0.5" opacity="0.2"/>
+              <line x1="6" y1="34" x2="42" y2="34" stroke="#00D4D4" strokeWidth="0.5" opacity="0.2"/>
+              {/* Vertical lines */}
+              <line x1="14" y1="6" x2="14" y2="42" stroke="#00D4D4" strokeWidth="0.5" opacity="0.2"/>
+              <line x1="24" y1="6" x2="24" y2="42" stroke="#00D4D4" strokeWidth="0.5" opacity="0.2"/>
+              <line x1="34" y1="6" x2="34" y2="42" stroke="#00D4D4" strokeWidth="0.5" opacity="0.2"/>
+              
+              {/* Central P with glow */}
+              <text 
+                x="24" 
+                y="32" 
+                textAnchor="middle" 
+                fill="#00D4D4" 
+                fontSize="24" 
+                fontWeight="300" 
+                fontFamily="Georgia, serif"
+                style={{ filter: "drop-shadow(0 0 4px rgba(0,212,212,0.5))" }}
+              >
+                P
+              </text>
+              
+              {/* Corner accents */}
+              <path d="M6 10 L6 6 L10 6" stroke="#00D4D4" strokeWidth="1.5" fill="none" opacity="0.6" strokeLinecap="round"/>
+              <path d="M42 10 L42 6 L38 6" stroke="#00D4D4" strokeWidth="1.5" fill="none" opacity="0.6" strokeLinecap="round"/>
+              <path d="M6 38 L6 42 L10 42" stroke="#00D4D4" strokeWidth="1.5" fill="none" opacity="0.6" strokeLinecap="round"/>
+              <path d="M42 38 L42 42 L38 42" stroke="#00D4D4" strokeWidth="1.5" fill="none" opacity="0.6" strokeLinecap="round"/>
+              
+              {/* Active indicator dots */}
+              <circle cx="10" cy="10" r="2" fill="#00D4D4" opacity="0.8"/>
+              <circle cx="38" cy="38" r="2" fill="#00D4D4" opacity="0.5"/>
             </svg>
           </div>
         );
       
       case "equity":
+        // Equity - Shared value / balance aesthetic
         return (
           <div 
             className="w-full h-full rounded-[22%] relative overflow-hidden"
             style={{
-              background: isFeatured 
-                ? "linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%)"
-                : isLocked 
-                ? "linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%)"
-                : "linear-gradient(135deg, #34D399 0%, #059669 100%)",
+              background: "linear-gradient(145deg, #0a0a0a 0%, #141414 50%, #1a1a1a 100%)",
               boxShadow: `
-                0 4px 12px ${isFeatured ? "rgba(0,200,200,0.2)" : isLocked ? "rgba(107,114,128,0.3)" : "rgba(5,150,105,0.35)"},
-                inset 0 1px 1px rgba(255,255,255,0.35),
-                inset 0 -1px 2px rgba(0,0,0,0.1)
+                0 4px 16px rgba(0,212,212,0.15),
+                0 0 0 0.5px rgba(0,212,212,0.1),
+                inset 0 1px 1px rgba(255,255,255,0.05),
+                inset 0 -1px 2px rgba(0,0,0,0.3)
               `,
             }}
           >
-            <svg viewBox="0 0 48 48" className="w-full h-full p-2.5">
-              {/* Upward trend line */}
-              <path d="M6 36 L14 28 L22 32 L34 14 L42 22" stroke={isFeatured ? "#00D4D4" : "white"} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              {/* Arrow head */}
-              <path d="M32 14 L42 14 L42 24" stroke={isFeatured ? "#00D4D4" : "white"} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-              {/* Data points */}
-              <circle cx="6" cy="36" r="3" fill={isFeatured ? "#00D4D4" : "white"}/>
-              <circle cx="14" cy="28" r="3" fill={isFeatured ? "#00D4D4" : "white"}/>
-              <circle cx="22" cy="32" r="3" fill={isFeatured ? "#00D4D4" : "white"}/>
-              <circle cx="34" cy="14" r="3.5" fill={isFeatured ? "#00D4D4" : "white"}/>
-            </svg>
-          </div>
-        );
-      
-      case "about":
-        return (
-          <div 
-            className="w-full h-full rounded-[22%] relative overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, #EC4899 0%, #DB2777 100%)",
-              boxShadow: `
-                0 4px 12px rgba(219,39,119,0.35),
-                inset 0 1px 1px rgba(255,255,255,0.3),
-                inset 0 -1px 2px rgba(0,0,0,0.1)
-              `,
-            }}
-          >
-            <svg viewBox="0 0 48 48" className="w-full h-full p-2.5">
-              {/* Book */}
-              <rect x="8" y="6" width="32" height="36" rx="2" fill="white" opacity="0.95"/>
-              <rect x="8" y="6" width="16" height="36" rx="2" fill="white"/>
-              <rect x="22" y="6" width="2" height="36" fill="rgba(0,0,0,0.06)"/>
-              {/* Info 'i' */}
-              <circle cx="24" cy="18" r="2" fill="#DB2777"/>
-              <rect x="22" y="23" width="4" height="12" rx="1" fill="#DB2777"/>
+            <svg viewBox="0 0 48 48" className="w-full h-full p-2">
+              {/* Balance scale aesthetic */}
+              {/* Central pillar */}
+              <line x1="24" y1="10" x2="24" y2="40" stroke="#00D4D4" strokeWidth="1.5" opacity="0.4"/>
+              
+              {/* Balance beam */}
+              <line x1="8" y1="18" x2="40" y2="18" stroke="#00D4D4" strokeWidth="2" opacity="0.8" strokeLinecap="round"/>
+              
+              {/* Pivot point */}
+              <circle cx="24" cy="18" r="3" fill="#00D4D4" opacity="0.9"/>
+              <circle cx="24" cy="18" r="1.5" fill="white" opacity="0.8"/>
+              
+              {/* Left scale - filled (representing your share) */}
+              <path d="M8 18 L8 26 Q8 30 12 30 L16 30 Q20 30 20 26 L20 18" 
+                stroke="#00D4D4" strokeWidth="1" fill="rgba(0,212,212,0.3)" strokeLinecap="round"/>
+              <rect x="10" y="22" width="8" height="6" rx="1" fill="#00D4D4" opacity="0.6"/>
+              
+              {/* Right scale - outline (representing shared upside) */}
+              <path d="M28 18 L28 26 Q28 30 32 30 L36 30 Q40 30 40 26 L40 18" 
+                stroke="#00D4D4" strokeWidth="1" fill="rgba(0,212,212,0.15)" strokeLinecap="round"/>
+              <rect x="30" y="24" width="8" height="4" rx="1" fill="#00D4D4" opacity="0.4"/>
+              
+              {/* Base */}
+              <rect x="18" y="38" width="12" height="3" rx="1.5" fill="#00D4D4" opacity="0.5"/>
+              
+              {/* Decorative arrows showing flow */}
+              <path d="M14 34 L24 34" stroke="#00D4D4" strokeWidth="0.75" opacity="0.3" strokeLinecap="round"/>
+              <path d="M24 34 L34 34" stroke="#00D4D4" strokeWidth="0.75" opacity="0.3" strokeLinecap="round"/>
             </svg>
           </div>
         );
@@ -383,7 +417,6 @@ const dockApps = [
   { id: "whatwedo", name: "What We Do", featured: true },
   { id: "faro", name: "Pharo Platform", featured: true },
   { id: "equity", name: "Equity", featured: true },
-  { id: "about", name: "About Sapira" },
   { id: "contact", name: "Contact" },
   { id: "sapira-ai", name: "Sapira AI", featured: true },
 ];

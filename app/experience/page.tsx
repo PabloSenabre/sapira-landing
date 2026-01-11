@@ -6,13 +6,16 @@ import VideoIntro from "@/components/VideoIntro";
 import TerminalExperience from "@/components/TerminalExperience";
 import WindowsXPDesktop from "@/components/windowsxp/WindowsXPDesktop";
 import MacOSDesktop from "@/components/macos/MacOSDesktop";
+import ExperienceMobile from "@/components/ExperienceMobile";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 /**
  * Immersive Experience Page
  * 
- * Full immersive flow for curious users:
+ * Full immersive flow for curious users (desktop only):
  * Video → Terminal → Windows XP → macOS (new OS)
  * 
+ * On mobile: Shows a beautiful message inviting to visit on desktop
  * This page does NOT return to the manifesto - it goes straight to macOS.
  */
 
@@ -20,6 +23,7 @@ type ExperiencePhase = "video" | "terminal" | "windowsxp" | "macos";
 
 export default function ExperiencePage() {
   const [phase, setPhase] = useState<ExperiencePhase>("video");
+  const isMobile = useIsMobile();
 
   const handleVideoComplete = () => {
     setPhase("terminal");
@@ -33,6 +37,11 @@ export default function ExperiencePage() {
   const handleXPComplete = () => {
     setPhase("macos");
   };
+
+  // On mobile, show simplified experience
+  if (isMobile) {
+    return <ExperienceMobile />;
+  }
 
   return (
     <div className="min-h-screen bg-black overflow-visible">
