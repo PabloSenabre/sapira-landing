@@ -150,6 +150,7 @@ function MethodologyNavbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [activeSection, setActiveSection] = useState("intro");
   const [isDarkSection, setIsDarkSection] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
 
   // Dark sections in the page
@@ -238,9 +239,9 @@ function MethodologyNavbar() {
             </motion.div>
           </Link>
 
-          {/* Section Navigation - Center */}
+          {/* Section Navigation - Center (hidden on mobile) */}
           <div 
-            className="flex items-center gap-1 rounded-full p-1 transition-all duration-300"
+            className="hidden md:flex items-center gap-1 rounded-full p-1 transition-all duration-300"
             style={{
               background: isDarkSection ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
               border: isDarkSection ? "1px solid rgba(255,255,255,0.06)" : "none",
@@ -297,8 +298,24 @@ function MethodologyNavbar() {
             })}
           </div>
 
-          {/* Back Button - Right side */}
-          <Link href="/" className="flex items-center group">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex items-center justify-center rounded-full p-2 transition-colors"
+            style={{
+              background: isDarkSection ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
+              border: isDarkSection ? "1px solid rgba(255,255,255,0.06)" : "none",
+            }}
+          >
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5" style={{ color: isDarkSection ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)" }} />
+            ) : (
+              <Menu className="w-5 h-5" style={{ color: isDarkSection ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.7)" }} />
+            )}
+          </button>
+
+          {/* Back Button - Right side (hidden on mobile) */}
+          <Link href="/" className="hidden md:flex items-center group">
             <motion.div 
               className="flex items-center justify-center rounded-full px-3 py-2 transition-colors"
               style={{
@@ -316,6 +333,65 @@ function MethodologyNavbar() {
           </Link>
         </div>
       </div>
+      
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden absolute top-full left-4 right-4 mt-2 rounded-2xl overflow-hidden"
+            style={{
+              background: isDarkSection 
+                ? "linear-gradient(135deg, rgba(30,30,35,0.98) 0%, rgba(20,20,25,0.98) 100%)"
+                : "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(250,250,249,0.98) 100%)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              border: isDarkSection ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
+            }}
+          >
+            <div className="py-3">
+              {methodologyNavLinks.map((link) => {
+                const isActive = activeSection === link.href.replace("#", "");
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-5 py-3 text-sm font-medium transition-colors"
+                    style={{
+                      background: isActive 
+                        ? isDarkSection ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)"
+                        : "transparent",
+                      color: isActive 
+                        ? isDarkSection ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.9)"
+                        : isDarkSection ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)",
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
+              <div 
+                className="mx-4 my-2 h-[1px]"
+                style={{ background: isDarkSection ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }}
+              />
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 px-5 py-3 text-sm transition-colors"
+                style={{ color: isDarkSection ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Home
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
