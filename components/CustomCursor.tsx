@@ -35,8 +35,8 @@ export default function CustomCursor({
       const isClickable =
         target.tagName === "BUTTON" ||
         target.tagName === "A" ||
-        target.closest("button") ||
-        target.closest("a") ||
+        !!target.closest("button") ||
+        !!target.closest("a") ||
         window.getComputedStyle(target).cursor === "pointer";
 
       setIsPointer(isClickable);
